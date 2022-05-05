@@ -47,7 +47,7 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's route middleware.
+    laravel websocket room chat event * The application's route middleware.
      *
      * These middleware may be assigned to groups or used individually.
      *
@@ -63,5 +63,6 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'admin' => \App\Http\Middleware\Admin::class,
     ];
 }

@@ -7,7 +7,7 @@
                     <div class="card-body p-0">
                         <ul class="list-unstyled" style="height:300px; overflow-y:scroll" v-chat-scroll>
                             <li class="p-2" v-for = "(massage,index) in messages" :key="index">
-                                <strong>{{massage.user.name}}</strong>
+                                <strong><img :src="'/user/avatar/'+massage.user.avatar"  class="user_img"/> {{massage.user.name}}</strong>
                                 {{massage.message}}
                             </li>
                         </ul>
@@ -31,7 +31,7 @@
                     <div class="card-body">
                         <ul>
                             <li class="py-2" v-for="(user,index) in users" :key="index">
-                                {{user.name}}
+                               <img :src="'/user/avatar/'+user.avatar"  class="user_img"/> {{user.name}}
                             </li>
                         </ul>
                     </div>
@@ -56,8 +56,12 @@
         },
 
         mounted() {
+
            this.fetchmessages();
-           Echo.join('chat')
+            var url = window.location.href;
+            var url_id = url.split("/").slice(-1)[0]
+
+           window.Echo.join('chat_'+url_id)
                .here(user => {
                    this.users = user;
                })
@@ -69,6 +73,7 @@
                })
                .listen('MessageSent',(event)=>{
                    this.messages.push(event.message)
+
                })
                .listenForWhisper('typing', user => {
                    this.activeUser = user;
@@ -82,24 +87,46 @@
         },
         methods: {
             fetchmessages(){
-                axios.get('messages_page').then(response =>{
+                var url = window.location.href;
+                var url_id = url.split("/").slice(-1)[0];
+
+                axios.get('/messages_page/'+ url_id).then(response =>{
                     this.messages = response.data;
+                }).catch(err =>{
+                    console.log(err.message)
                 })
             },
 
             send_messages(){
+                var url = window.location.href;
+                var url_id = url.split("/").slice(-1)[0]
                 this.messages.push({
                     user:this.user,
                     message: this.newMessage
                 });
-              axios.post('send_messages', {message: this.newMessage});
+              axios.post('/send_messages', {message: this.newMessage, room_id:url_id});
 
               this.newMessage = '';
+
             },
             sendTypingEvent(){
-                Echo.join('chat')
+
+                var url = window.location.href;
+                var url_id = url.split("/").slice(-1)[0]
+                window.Echo.join('chat_'+url_id)
                     .whisper('typing' , this.user);
-            }
+            },
+
+
         }
     }
 </script>
+
+
+<style>
+.user_img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+</style>

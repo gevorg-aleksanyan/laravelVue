@@ -11,11 +11,10 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcast
+class TestEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $message;
-
     /**
      * Create a new event instance.
      *
@@ -24,7 +23,6 @@ class MessageSent implements ShouldBroadcast
     public function __construct(Message $message)
     {
         $this->message = $message;
-
     }
 
     /**
@@ -34,9 +32,6 @@ class MessageSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('chat_'. $this->message->room_id);
+        return new PrivateChannel('channel-name');
     }
-
-
-
 }

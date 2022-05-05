@@ -23,6 +23,12 @@ Vue.use(VueChatScroll)
 
 Vue.component('chats', require('./components/ChatsComponent.vue').default);
 
+Vue.component('admin', require('./components/AdminComponent.vue').default);
+
+Vue.component('room', require('./components/RoomComponent.vue').default);
+
+Vue.component('home_user', require('./components/HomeComponent.vue').default);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

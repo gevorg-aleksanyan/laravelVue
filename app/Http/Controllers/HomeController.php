@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Room;
+use App\Models\RoomUser;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +25,20 @@ class HomeController extends Controller
      */
     public function index()
     {
+
         return view('home');
+    }
+    public function  delete_room(){
+    $del_room = RoomUser::where('user_id',auth()->user()->id)->first();
+
+        if($del_room != null){
+            $del_room->delete();
+        }
+        return ['status'=>'succsess'];
+    }
+
+    public function home_fetchRoom()
+    {
+        return Room::all();
     }
 }

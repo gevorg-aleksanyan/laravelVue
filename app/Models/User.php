@@ -19,6 +19,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname',
+        'avatar',
         'email',
         'password',
     ];
@@ -44,5 +46,9 @@ class User extends Authenticatable
 
     public function messages(){
         return $this->hasMany(Message::class);
+    }
+
+    public function room_user(){
+        return $this->hasMany(RoomUser::class,user_id);
     }
 }
