@@ -8,10 +8,6 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('admin');
-    }
 
     public function index()
     {
@@ -20,15 +16,23 @@ class AdminController extends Controller
 
     public function room()
     {
-        return view('addRoom');
+
+        return view('add-room');
     }
 
     public function room_page(Request $request)
     {
         $room = new Room();
-        $room->name = $request->name;
-        $room->save();
-        return response()->json();
+        if($request->name){
+            $room->name = $request->name;
+            $room->save();
+            $status = 'Success';
+            return response()->json($status);
+        }else{
+            $status = 'Error';
+            return response()->json($status);
+        }
+
     }
 
     public function fetchRoom()

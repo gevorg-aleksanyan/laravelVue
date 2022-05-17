@@ -1,10 +1,7 @@
 <template>
     <div>
-
             <input type="text" v-model="name">
             <button @click="acceptBudget">Accept budget</button>
-
-
     </div>
 </template>
 

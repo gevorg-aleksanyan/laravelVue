@@ -7,7 +7,7 @@
                     <div class="card-body p-0">
                         <ul class="list-unstyled" style="height:300px; overflow-y:scroll" v-chat-scroll>
                             <li class="p-2" v-for = "(massage,index) in messages" :key="index">
-                                <strong><img :src="'/user/avatar/'+massage.user.avatar"  class="user_img"/> {{massage.user.name}}</strong>
+                                <strong ><span v-if="massage.user.avatar"><img :src="'/user/avatar/'+massage.user.avatar"  class="user_img"/> </span>{{massage.user.name}}</strong>
                                 {{massage.message}}
                             </li>
                         </ul>
@@ -15,7 +15,7 @@
 
                     <input
                         @keydown="sendTypingEvent"
-                        @keyup.enter = "send_messages"
+                        @keyup.enter = "sendMessages"
                         v-model="newMessage"
                         type="text"
                         name="message"
@@ -42,26 +42,26 @@
 </template>
 
 <script>
+import Services from "../services/services";
     export default {
-
-        props:['user'],
+        // props:['user'],
         data(){
             return {
+                user:{},
                 messages: [],
                 newMessage: '',
                 users:[],
                 activeUser:false,
                 typingTimer:false,
+                id:window.location.href.split("/").slice(-1)[0]
+
             }
         },
 
-        mounted() {
+       async mounted() {
 
-           this.fetchmessages();
-            var url = window.location.href;
-            var url_id = url.split("/").slice(-1)[0]
-
-           window.Echo.join('chat_'+url_id)
+          await this.fetchMessages();
+           window.Echo.join('chat_'+this.$route.params.id)
                .here(user => {
                    this.users = user;
                })
@@ -69,6 +69,7 @@
                    this.users.push(user);
                })
                .leaving(user => {
+
                    this.users = this.users.filter(u => u.id != user.id);
                })
                .listen('MessageSent',(event)=>{
@@ -86,34 +87,26 @@
                })
         },
         methods: {
-            fetchmessages(){
-                var url = window.location.href;
-                var url_id = url.split("/").slice(-1)[0];
 
-                axios.get('/messages_page/'+ url_id).then(response =>{
-                    this.messages = response.data;
-                }).catch(err =>{
-                    console.log(err.message)
-                })
+          async  userTime(){
+              await Services.getChats();
             },
 
-            send_messages(){
-                var url = window.location.href;
-                var url_id = url.split("/").slice(-1)[0]
-                this.messages.push({
-                    user:this.user,
-                    message: this.newMessage
-                });
-              axios.post('/send_messages', {message: this.newMessage, room_id:url_id});
+           async fetchMessages(){
+          const  data = await Services.getItem(this.$route.params.id)
+               this.messages = data.data
+            },
 
+          async  sendMessages(){
+             const data =   await Services.PostMassage(this.$route.params.id, {message: this.newMessage, room_id: this.$route.params.id});
+              this.messages.push({
+                  user:data.data.user,
+                  message: this.newMessage
+              });
               this.newMessage = '';
-
             },
             sendTypingEvent(){
-
-                var url = window.location.href;
-                var url_id = url.split("/").slice(-1)[0]
-                window.Echo.join('chat_'+url_id)
+                window.Echo.join('chat_'+this.$route.params.id)
                     .whisper('typing' , this.user);
             },
 

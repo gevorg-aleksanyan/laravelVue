@@ -21,13 +21,13 @@ Vue.use(VueChatScroll)
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('chats', require('./components/ChatsComponent.vue').default);
+// Vue.component('chats', require('./components/ChatsComponent.vue').default);
 
-Vue.component('admin', require('./components/AdminComponent.vue').default);
+Vue.component('admin', require('./App.vue').default);
+//
+// Vue.component('room', require('./components/RoomComponent.vue').default);
 
-Vue.component('room', require('./components/RoomComponent.vue').default);
-
-Vue.component('home_user', require('./components/HomeComponent.vue').default);
+Vue.component('home_user', require('./App.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -35,6 +35,39 @@ Vue.component('home_user', require('./components/HomeComponent.vue').default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+
+// const app = new Vue({
+//     el: '#app',
+// });
+
+import VueRouter from 'vue-router'
+import HomeComponent from "./components/HomeComponent.vue"
+import ChatsComponent from "./components/ChatsComponent";
+import AdminComponent from "./components/AdminComponent";
+Vue.use(VueRouter)
+//
+const routes = [
+    {
+        name:'home',
+        path: '/home',
+        component:HomeComponent
+    },
+    {
+        name:'chats',
+        path: '/chats/:id',
+        component:ChatsComponent
+    },
+    {
+        name:'admin',
+        path: '/admin-dashboard',
+        component:AdminComponent
+    },
+
+
+]
+
+const router = new VueRouter({mode:'history',  routes:routes});
+
 const app = new Vue({
-    el: '#app',
-});
+    router
+}).$mount('#app')

@@ -7,10 +7,16 @@
             </tr>
             <tr v-for="(room,index) in rooms" :key="index">
                 <td>{{room.name}}</td>
-                <td><button @click="send_room(room.id)">Open</button></td>
+                <td>
+<!--                    <button @click="sendRoom(room.id)">Open</button>-->
+                    <router-link :to="{name:'chats',params: {id:room.id} }" class="btn btn-primary btn-sm">Open</router-link>
+
+                </td>
+
             </tr>
 
         </table>
+
     </div>
 </template>
 
@@ -26,23 +32,17 @@ export default {
     },
 
     mounted() {
-        this.delete_room();
-        this.fetchroom();
+        this.deleteRoom();
+        this.fetchRoom();
     },
 
     methods:{
-        fetchroom() {
+        fetchRoom() {
             axios.post('/home-fetch-room').then(response => {
                 this.rooms = response.data;
             })
         },
-
-        send_room(id){
-            axios.get('chat-page/' + id).then(response => {
-                window.location.href = 'chats/'+id;
-            })
-        },
-        delete_room(){
+        deleteRoom(){
             axios.get('delete-room/').then(response => {
                response.data
             });
